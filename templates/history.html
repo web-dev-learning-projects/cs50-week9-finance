@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History 
+{% endblock %}
+
+{% block main %}
+    {% if histories %}
+    <h3 class="text-white mb-3">Portfolio</h3>
+    <table class="table table-borderless">
+        <thead>
+            <th>Stock</th>
+            <th>Quantity</th>
+            <th>Activity</th>
+            <th>Buying price</th>
+            <th>Selling price</th>
+            <th>Cost</th>
+            <th>Time</th>
+        </thead>
+        <tbody>
+            {% for entry in histories %}
+            <tr>
+                <th>{{ entry.symbol|upper }}</th>
+                <th>{{ entry.quantity }}</th>
+                <th>{{ entry.activity }}</th>
+                <th>
+                    ${{ entry.buying_price }}
+                </th>
+                <th>
+                    {% if entry.activity == 'sell' %}
+                        ${{ entry.selling_price }}
+                    {% else %}
+                        ---
+                    {% endif %}
+                </th>
+                <th>
+                    {% if entry.activity == 'sell' %}
+                        ${{ entry.quantity*entry.selling_price }}</th>
+                    {% else %}
+                        ${{ entry.quantity*entry.buying_price }}</th>
+                    {% endif %}
+                <th>{{ entry.created_at}}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h3>You have nothing to see.</h3>
+    {% endif %}
+{% endblock %}
+        

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Qoute 
+{% endblock %}
+
+{% block main %}
+<i class="bi bi-arrow-down"></i>
+    <form action="/quote" method="post">
+    <div class="mb-3">
+        <label for="stock symbol">Stock Symbol</label>
+        <input
+        autocomplete="off"
+        autofocus
+        class="form-control mx-auto w-auto"
+        name="symbol"
+        placeholder="Stock symbol"
+        type="text"
+        />
+    </div>
+    <button class="btn btn-primary" type="submit">Get Price</button>
+    </form>
+    {% if data %}
+    <div class="container mt-5">
+        <h3 class="text-white mb-3">Stoke Information</h3>
+        <table class="table table-borderless">
+            <tbody>
+                <tr class="table-dark">
+                    <th>Symbol</th>
+                    <td>{{ data.symbol }}</td>
+                </tr>
+                <tr class="table-dark">
+                    <th>Name</th>
+                    <td>{{ data.name }}</td>
+                </tr>
+                <tr class="table-dark">
+                    <th>Price</th>
+                    <td>${{ data.price }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+{% endblock %}
+        

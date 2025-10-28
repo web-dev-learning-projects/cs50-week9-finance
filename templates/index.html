@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home 
+{% endblock %}
+
+{% block main %}
+    {% if stocks %}
+    <h3 class="text-white mb-3">Portfolio</h3>
+    <table class="table table-borderless">
+        <thead>
+            <th>Stock</th>
+            <th>Quantity</th>
+            <th>Sold Quantity</th>
+            <th>Buying price</th>
+            <th>Current price</th>
+            <th>Current Cost</th>
+            <th>Bought</th>
+            <th>Last sold</th>
+        </thead>
+        <tbody>
+            {% for entry in stocks %}
+            <tr>
+                <th>{{ entry.symbol|upper }} | {{ stock_data[entry.symbol].name }}</th>
+                <th>{{ entry.quantity }}</th>
+                <th>{{ entry.sold_quantity }}</th>
+                <th>${{ entry.price }}</th>
+                <th>
+                    {% if stock_data[entry.symbol].price >= entry.price %}
+                        <span class="text-success">${{ stock_data[entry.symbol].price }}</span><i class="bi bi-arrow-up"></i>
+                    {% else %}
+                        <span class="text-danger">${{ stock_data[entry.symbol].price }}</span><i class="bi bi-arrow-down"></i>
+                    {% endif %}
+                </th>
+                <th>${{ entry.quantity*stock_data[entry.symbol].price }}</th>
+                <th>{{ entry.created_at}}</th>
+                <th>
+                    {% if entry.created_at != entry.updated_at %}
+                        {{ entry.updated_at}}
+                    {% else %}
+                        ---
+                    {% endif %}
+                </th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h3>You have nothing to see.</h3>
+    {% endif %}
+
+    <div class="container d-flex justify-content-end gap-10">
+        <!-- total cash -->
+        <div class="card">
+            <div class="card-header">
+                User Cash
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">$&nbsp;{{ user.cash }}</h3>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                Stock price
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">$&nbsp;{{ user.stock_values }}</h3>
+            </div>
+        </div>
+        <!-- grand total  -->
+        <div class="card">
+            <div class="card-header">
+                Grand Total
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">$&nbsp;{{ user.stock_values + user.cash }}</h3>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+        
