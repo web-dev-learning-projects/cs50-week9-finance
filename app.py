@@ -73,7 +73,7 @@ def buy():
             return apology(f"Error: {error}.", 400)
         
         if not stock_data:
-            return apology("Invalid symbol.", 404)
+            return apology("Invalid symbol.", 400)
 
         cost = quantity*stock_data["price"]
 
@@ -85,9 +85,9 @@ def buy():
             return apology("Not enough money to buy, you brook.")
         
         try:
-            buy_stock = db.execute("INSERT INTO user_shares (user, symbol, price, quantity) VALUES(?, ?, ?, ?)", user.get("id"), symbol, stock_data["price"], quantity)
-            user_update = db.execute("UPDATE users SET cash = ? WHERE id = ?", user.get("cash")-cost, user.get("id"))
-            db.execute("INSERT INTO user_histories (user, symbol, buying_price, activity, quantity) VALUES(?, ?, ?, ?, ?)", user["id"], symbol, stock_data["price"], 'buy', quantity)
+            buy_stock = db.execute("INSERT INTO user_shares (user, symbol, price, quantity) VALUES(?, ?, ?, ?)", user.get("id"), symbol, usd(stock_data["price"]), quantity)
+            user_update = db.execute("UPDATE users SET cash = ? WHERE id = ?", usd(user.get("cash")-cost), user.get("id"))
+            db.execute("INSERT INTO user_histories (user, symbol, buying_price, activity, quantity) VALUES(?, ?, ?, ?, ?)", user["id"], symbol, usd(stock_data["price"]), 'buy', quantity)
 
         except Exception as error:
             return apology(f"Couldn't buy the stock. {error}")
@@ -175,6 +175,7 @@ def quote():
             return apology(f"ERROR: {error}", 500)
         if not data:
             return apology(f"Code does not exist", 400)
+        data["price"] = usd(data["price"])
         return render_template("qoute.html", data=data)
 
 
@@ -190,22 +191,22 @@ def register():
         confirm = request.form.get("confirmation", "").strip()
         
         if not username:
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         # Ensure password was submitted
         elif not password:
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
         
         # Ensure confirm was submitted and equal
         elif not confirm or confirm != password:
-            return apology("confirm password must match with password", 403)
+            return apology("confirm password must match with password", 400)
     
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
 
         # Ensure username exists and password is correct
         if len(rows) != 0:
-            return apology("Username already exists.", 403)
+            return apology("Username already exists.", 400)
         
         try:
             # register user 
@@ -267,11 +268,11 @@ def sell():
                 curr_time = datetime.now()
                 db.execute("UPDATE user_shares SET quantity=? , sold_quantity=? , updated_at=? WHERE id=?", share_count-min(share_count, quantity), min(share_count, quantity), curr_time, share_id)
                 # add entry in history
-                db.execute("INSERT INTO user_histories (user, symbol, buying_price, selling_price, activity, quantity) VALUES(?, ?, ?, ?, ?, ?)", user_id, share_symbol, share["price"], curr_price, 'sell', min(share_count, quantity))
+                db.execute("INSERT INTO user_histories (user, symbol, buying_price, selling_price, activity, quantity) VALUES(?, ?, ?, ?, ?, ?)", user_id, share_symbol, usd(share["price"]), usd(curr_price), 'sell', min(share_count, quantity))
                 capital_gain += (curr_price*min(share_count, quantity))
                 quantity -= share_count
         
         # update cash for user
-        db.execute("UPDATE users SET cash=? WHERE id=?", user["cash"]+capital_gain, user_id)
+        db.execute("UPDATE users SET cash=? WHERE id=?", usd(user["cash"]+capital_gain), user_id)
 
         return redirect("/")
