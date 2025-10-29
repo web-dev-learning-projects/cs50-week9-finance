@@ -24,20 +24,20 @@
                 <th>{{ entry.quantity }}</th>
                 <th>{{ entry.activity }}</th>
                 <th>
-                    ${{ entry.buying_price }}
+                    {{ entry.buying_price|usd }}
                 </th>
                 <th>
                     {% if entry.activity == 'sell' %}
-                        ${{ entry.selling_price }}
+                        {{ entry.selling_price|usd }}
                     {% else %}
                         ---
                     {% endif %}
                 </th>
                 <th>
                     {% if entry.activity == 'sell' %}
-                        ${{ entry.quantity*entry.selling_price }}</th>
+                        {{ (entry.quantity*entry.selling_price)|usd }}</th>
                     {% else %}
-                        ${{ entry.quantity*entry.buying_price }}</th>
+                        ${{ (entry.quantity*entry.buying_price)|usd }}</th>
                     {% endif %}
                 <th>{{ entry.created_at}}</th>
             </tr>

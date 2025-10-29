@@ -24,15 +24,15 @@
                 <th>{{ entry.symbol|upper }} | {{ stock_data[entry.symbol].name }}</th>
                 <th>{{ entry.quantity }}</th>
                 <th>{{ entry.sold_quantity }}</th>
-                <th>${{ entry.price }}</th>
+                <th>{{ entry.price|usd }}</th>
                 <th>
                     {% if stock_data[entry.symbol].price >= entry.price %}
-                        <span class="text-success">${{ stock_data[entry.symbol].price }}</span><i class="bi bi-arrow-up"></i>
+                        <span class="text-success">{{ (stock_data[entry.symbol].price)|usd }}</span><i class="bi bi-arrow-up"></i>
                     {% else %}
-                        <span class="text-danger">${{ stock_data[entry.symbol].price }}</span><i class="bi bi-arrow-down"></i>
+                        <span class="text-danger">{{ (stock_data[entry.symbol].price)|usd }}</span><i class="bi bi-arrow-down"></i>
                     {% endif %}
                 </th>
-                <th>${{ entry.quantity*stock_data[entry.symbol].price }}</th>
+                <th>{{ (entry.quantity*stock_data[entry.symbol].price)|usd }}</th>
                 <th>{{ entry.created_at}}</th>
                 <th>
                     {% if entry.created_at != entry.updated_at %}
@@ -56,7 +56,7 @@
                 User Cash
             </div>
             <div class="card-body">
-                <h3 class="card-title">$&nbsp;{{ user.cash }}</h3>
+                <h3 class="card-title">{{ user.cash|usd }}</h3>
             </div>
         </div>
         
@@ -65,7 +65,7 @@
                 Stock price
             </div>
             <div class="card-body">
-                <h3 class="card-title">$&nbsp;{{ user.stock_values }}</h3>
+                <h3 class="card-title">{{ user.stock_values|usd }}</h3>
             </div>
         </div>
         <!-- grand total  -->
@@ -74,7 +74,7 @@
                 Grand Total
             </div>
             <div class="card-body">
-                <h3 class="card-title">$&nbsp;{{ user.stock_values + user.cash }}</h3>
+                <h3 class="card-title">{{ (user.stock_values + user.cash)|usd }}</h3>
             </div>
         </div>
     </div>
